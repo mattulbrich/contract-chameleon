@@ -1,0 +1,8 @@
+package org.contract_lib.lang.contract_lib.ast;
+
+import java.util.List;
+
+public record Datatype(
+    SortDec.Def identifier,
+    DatatypeDec dtDec
+) { }

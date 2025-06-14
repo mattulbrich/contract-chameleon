@@ -1,0 +1,25 @@
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore build files of examples
+**/key-provider
+**/key-applicant
+**/key-import
+**/verifast-provider
+**/verifast-applicant
+
+# Ignore Eclipse settings
+**/.settings
+**/.project
+**/.classpath
+**/bin
+
+# IntelliJ files
+.idea
+
+# Ignore Gradle build output directory
+build
+**/.DS_Store
+
+# Ignore Tools folder
+tools/
