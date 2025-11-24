@@ -16,18 +16,16 @@ public abstract class TreeNode {
 
     /*@  normal_behavior
         requires (false | true);
-        ensures (true & (true ==> this.absVal == \dl_finiteSetSingleton(v)));
+        ensures (true & (true ==> \result.absVal == \dl_finiteSetSingleton(v)));
         ensures \fresh(\result.footprint);
-        accessible this.footprint;
-        assignable this.footprint;
         */
-    public static void init(int v) {
+    public static TreeNode init(int v) {
         return new TreeNodeImpl(v);
     }
 
     /*@  normal_behavior
         requires (false | true);
-        ensures (true & (true ==> (\forall int x;\dl_finiteSetMember(x, \old(this.absVal)) || x == v) && \dl_finiteSetMember(v, this.absVal)));
+        ensures (true & (true ==> (\forall int x;\dl_finiteSetMember(\old(this.absVal), x) || x == v) && \dl_finiteSetMember(this.absVal, v)));
         accessible this.footprint;
         assignable this.footprint;
         */
@@ -35,7 +33,7 @@ public abstract class TreeNode {
 
     /*@  normal_behavior
         requires (false | true);
-        ensures (true & (true ==> \result == \dl_finiteSetMember(v, this.absVal)));
+        ensures (true & (true ==> \result == \dl_finiteSetMember(this.absVal, v)));
         accessible this.footprint;
         assignable this.footprint;
         */

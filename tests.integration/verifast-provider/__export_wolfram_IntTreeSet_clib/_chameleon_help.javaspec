@@ -16,6 +16,6 @@ predicate helper_predicate(
     int v,
     list<int> this_absVal,
     boolean helper_predicate_res
-) = (METHOD_APPL) || ((true) == (v)) ;
+) = (mem(this_absVal_old, true)) || ((true) == (v)) ;
 
 @*/

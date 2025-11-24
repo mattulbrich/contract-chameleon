@@ -86,6 +86,7 @@
   ))
 )
 
+; EDIT: This looks strange
 (define-contract example_test_set.SetWrapper.member
   (
    (this (inout SetWrapper))
@@ -94,9 +95,9 @@
   ((
     true
     (and 
-      (= (a this) (set.member (old (a this)) value))
-      (= (b this) (set.member (old (b this)) value))
-      (= (c this) (set.member (old (c this)) value))
+      (set.member (old (a this)) value)
+      (set.member (old (b this)) value)
+      (set.member (old (c this)) value)
     )
   ))
 )

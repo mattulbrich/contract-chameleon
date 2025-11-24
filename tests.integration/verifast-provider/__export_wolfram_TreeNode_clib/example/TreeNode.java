@@ -4,18 +4,19 @@ public abstract class TreeNode {
 
     //@ predicate pred(list<int> absVal);
 
-    public static void init(int v)
+    public static TreeNode init(int v)
     //@ requires true;
-    //@ ensures (METHOD_APPL) == (METHOD_APPL);
+    //@ ensures result.pred(?result_absVal) &*& (result_absVal) == (cons(v, nil));
     {
         //TODO: Implement method 'example.TreeNode.init'.
+        return null;
     }
 
     public abstract void add(int v);
     //@ requires this.pred(?this_absVal_old) &*& true;
-    //@ ensures this.pred(?this_absVal) &*& helper_predicate(v, this_absVal_old, v, this_absVal, ?helper_predicate_res) &*& (helper_predicate_res) && (METHOD_APPL);
+    //@ ensures this.pred(?this_absVal) &*& helper_predicate(v, this_absVal_old, v, this_absVal, ?helper_predicate_res) &*& (helper_predicate_res) && (mem(v, this_absVal));
 
     public abstract boolean contains(int v);
     //@ requires this.pred(?this_absVal_old) &*& true;
-    //@ ensures this.pred(?this_absVal) &*& (result) == (METHOD_APPL);
+    //@ ensures this.pred(?this_absVal) &*& (result) == (mem(v, this_absVal));
 }
