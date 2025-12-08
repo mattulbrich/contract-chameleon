@@ -1,6 +1,7 @@
 package org.contract_lib.adapters;
 
 import org.contract_lib.contract_chameleon.Adapter;
+import org.contract_lib.contract_chameleon.AdapterArgumentProvider;
 import org.contract_lib.contract_chameleon.AdapterMap;
 
 public final class Help extends Adapter implements HelpMessage {
@@ -27,7 +28,9 @@ public final class Help extends Adapter implements HelpMessage {
   }
 
   @Override
-  public void perform(String[] args) {
+  public void perform(
+      AdapterArgumentProvider argumentProvider,
+      String[] args) {
 
     AdapterMap<HelpMessage> helpMap = new AdapterMap<>(HelpMessage.class);
     AdapterMap<Adapter> adapterMap = new AdapterMap<>(Adapter.class);

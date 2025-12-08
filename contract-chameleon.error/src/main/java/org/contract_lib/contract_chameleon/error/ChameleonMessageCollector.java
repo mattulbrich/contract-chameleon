@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.stream.Stream;
 
 /// Manager for messages that are shown to the user.
-public final class ChameleonMessageManager {
+public final class ChameleonMessageCollector {
 
-  private final List<ChameleonReportable> messages = new ArrayList<>();
+  private final List<ChameleonFileReportable> messages = new ArrayList<>();
 
   /// Report a new message.
-  public void report(ChameleonReportable message) {
+  public void report(ChameleonFileReportable message) {
     messages.add(message);
   }
 
   /// Get a sorted stream of all messages.
-  public Stream<ChameleonReportable> getMessages() {
+  public Stream<ChameleonFileReportable> getMessages() {
     return messages.stream().sorted();
   }
 
@@ -27,11 +27,7 @@ public final class ChameleonMessageManager {
         .forEachOrdered(System.err::println);
   }
 
-  /// Check that there are no reported messages
-  public void check() throws Exception {
-    //TODO: Provide better interface for `ChameleonMessageManager`.
-    if (!messages.isEmpty()) {
-      throw new Exception("Message");
-    }
+  public ChameleonMessageGroup toMessageGroup(String reason) {
+    return new ChameleonMessageGroup(reason, messages);
   }
 }

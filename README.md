@@ -10,6 +10,12 @@ The tool with all default adapters can be run with:
 java -jar contract-chameleon-exe.jar
 ```
 
+### Available Arguments
+
+```sh
+java -jar contract-chameleon-exe.jar <adapter identifier> <input path> [-o <custom output path>]
+```
+
 ## Add own Adapters
 
 Place the `JAR` of the additional adapter next to the `contract-chameleon-exe.jar`
@@ -66,6 +72,7 @@ For each module the `JavaDoc` can be found in `<module>/build/docs/javadoc/org/c
 ## Run integration tests with tools
 
 ### KeY
+
 ```sh
 # check if proofs can be found in key (see folder `tests.integration`)
 gradle key_ci-check-all --continue

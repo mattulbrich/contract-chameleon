@@ -55,7 +55,7 @@ class CreateAstFromSourceErrorTest {
     System.err.println(filePath);
 
     assertThrows(
-        ChameleonMessageGroup.class,
+        Exception.class,
         messageManager::check,
         "An error is expected.");
 

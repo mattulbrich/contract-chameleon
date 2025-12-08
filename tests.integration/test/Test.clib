@@ -1,0 +1,24 @@
+
+(declare-abstraction 
+(Cell 0)
+(
+  (
+    Cell (v (Seq Int))
+  )
+)
+
+)
+
+(define-contract Cell.test
+  (
+    (this (inout Cell))
+    (x (inout Cell))
+  ) 
+  (
+    (true
+     (= (v this) (v x))
+    )
+    (
+    )
+  )
+)

@@ -3,7 +3,7 @@ package org.contract_lib.contract_chameleon.error;
 import java.util.Comparator;
 import java.util.Optional;
 
-public abstract class ChameleonFileReportable extends Comparable<ChameleonFileReportable> {
+public abstract class ChameleonFileReportable implements Comparable<ChameleonFileReportable>, ChameleonReportable {
 
   /// Interface for messages of contract-chameleon.
   /// The location (file path) where the message appears.
@@ -32,10 +32,10 @@ public abstract class ChameleonFileReportable extends Comparable<ChameleonFileRe
   public abstract ChameleonMessageType messageType();;
 
   public int compareTo(ChameleonFileReportable o) {
-    return Comparator.comparing(ChameleonReportable::getLocationIdentifier)
-        .thenComparing(ChameleonReportable::getLine)
-        .thenComparing(ChameleonReportable::getCharIndex)
-        .thenComparing(ChameleonReportable::messageType)
+    return Comparator.comparing(ChameleonFileReportable::getLocationIdentifier)
+        .thenComparing(ChameleonFileReportable::getLine)
+        .thenComparing(ChameleonFileReportable::getCharIndex)
+        .thenComparing(ChameleonFileReportable::messageType)
         .compare(this, o);
   }
 }

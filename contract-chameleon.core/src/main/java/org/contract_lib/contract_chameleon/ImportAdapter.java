@@ -28,7 +28,9 @@ public abstract class ImportAdapter extends Adapter {
   private ChameleonMessageManager messageManager = new ChameleonMessageManager();
 
   @Override
-  public final void perform(String[] args) {
+  public final void perform(
+      AdapterArgumentProvider adapterProvider,
+      String[] args) {
 
     System.err.println("============================== ");
     System.err.println("==== Perform Key Provider ==== "); //TODO: proper title provider

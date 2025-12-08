@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.contract_lib.contract_chameleon.arguments.OutputPath;
 import org.contract_lib.contract_chameleon.error.ChameleonMessageManager;
 
 public abstract class ExportAdapter extends Adapter {
@@ -24,7 +25,9 @@ public abstract class ExportAdapter extends Adapter {
   private ChameleonMessageManager messageManager = new ChameleonMessageManager();
 
   @Override
-  public final void perform(String[] args) {
+  public final void perform(
+      AdapterArgumentProvider adapterProvider,
+      String[] args) {
 
     System.err.println("============================== ");
     System.err.println("==== Perform Key Provider ==== "); //TODO: proper title provider
@@ -41,10 +44,14 @@ public abstract class ExportAdapter extends Adapter {
 
     try {
       List<TranslationResult> results = this.perform(List.of(Paths.get(inputFileName)), messageManager);
+
       // Create adapter directory
-      String outputDir = defaultOutputDir();
+      String outputDir = adapterProvider.getAdapterArgument(OutputPath.class).map(OutputPath::getPath)
+          .orElse(defaultOutputDir());
+
       String fileDir = getDirForFile(inputFileName);
       Path directoryPath = Paths.get(".", outputDir, fileDir);
+
       if (Files.isDirectory(directoryPath)) {
         System.err.println(String.format("INFO: Directory at %s does already exist.", directoryPath));
       } else {
