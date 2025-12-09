@@ -27,7 +27,7 @@ public abstract class TreeNode {
 
     /*@  normal_behavior
         requires (false | true);
-        ensures (true & (true ==> (\forall int x;\dl_sElementOf(\old(this.absVal), x) || x == v) && \dl_sElementOf(this.absVal, v)));
+        ensures (true & (true ==> this.absVal == \dl_sUnion(\old(this.absVal), \dl_sSingleton(v))));
         accessible this.footprint;
         assignable this.footprint;
         */
@@ -35,7 +35,7 @@ public abstract class TreeNode {
 
     /*@  normal_behavior
         requires (false | true);
-        ensures (true & (true ==> \result == \dl_sElementOf(this.absVal, v)));
+        ensures (true & (true ==> \result == \dl_sElementOf(v, this.absVal)));
         accessible this.footprint;
         assignable this.footprint;
         */

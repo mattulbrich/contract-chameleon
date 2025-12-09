@@ -6,7 +6,7 @@ public class IntTreeSetImpl extends IntTreeSet {
 
     public void add(int v)
     //@ requires this.pred(?this_absVal_old) &*& true;
-    //@ ensures this.pred(?this_absVal) &*& helper_predicate(v, this_absVal_old, v, this_absVal, ?helper_predicate_res) &*& (helper_predicate_res) && (mem(this_absVal, v));
+    //@ ensures this.pred(?this_absVal) &*& (this_absVal) == (METHOD_APPL);
     {
         //TODO: Implement method 'example.IntTreeSet.add'.
     }

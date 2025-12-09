@@ -26,7 +26,7 @@ public abstract class IntTreeSet {
 
     /*@  normal_behavior
         requires (false | true);
-        ensures (true & (true ==> (\forall int x;\dl_sElementOf(x, \old(this.absVal)) || x == v) && \dl_sElementOf(v, this.absVal)));
+        ensures (true & (true ==> this.absVal == \dl_sUnion(\old(this.absVal), \dl_sSingleton(v))));
         accessible this.footprint;
         assignable this.footprint;
         */

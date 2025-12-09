@@ -12,12 +12,11 @@
     ((this (inout TreeNode))
      (v (in Int)))
     ((true
-     (and (forall ((x Int)) (or (set.member (old (absVal this)) x) (= x v)))
-          (set.member (absVal this) v)))))
+     (= (absVal this) (set.union (old (absVal this)) (set.singleton v))))))
 
 (define-contract example.TreeNode.contains
     ((this (inout TreeNode))
      (v (in Int))
      (result (out Bool)))
     ((true
-     (= result (set.member (absVal this) v)))))
+     (= result (set.member v (absVal this))))))

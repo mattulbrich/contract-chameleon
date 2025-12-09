@@ -10,12 +10,4 @@ fixpoint boolean implies(boolean a, boolean b) {
 }
 
 
-predicate helper_predicate(
-    int v,
-    list<int> this_absVal_old,
-    int v,
-    list<int> this_absVal,
-    boolean helper_predicate_res
-) = (mem(true, this_absVal_old)) || ((true) == (v)) ;
-
 @*/
