@@ -101,6 +101,8 @@ import static org.contract_lib.adapters.translations.VariableScope.VariableTrans
 public class SimpleKeyProviderTranslator {
 
   private static final String IMPLEMENTATION_SUFFIX = "Impl";
+  private static String FOOTPRINT_NAME = "fp";
+  private static String RESULT_LABEL = "\\result";
 
   private ChameleonMessageManager messageManager;
   private KeyTranslations keyTranslator;
@@ -232,7 +234,7 @@ public class SimpleKeyProviderTranslator {
       if (formal.identifier().identifier().equals("result")) {
         VariableScopeElement el = new VariableScopeElement(
             s,
-            new NameExpr("\\result"),
+            new NameExpr(RESULT_LABEL),
             formal.sort(),
             t.getJmlType(formal.sort()),
             t.hasFootprint());
@@ -496,7 +498,7 @@ public class SimpleKeyProviderTranslator {
             new SimpleName("\\subset"),
             NodeList.nodeList(
                 new FieldAccessExpr(new ThisExpr(), NodeList.nodeList(), new SimpleName("*")),
-                new FieldAccessExpr(new ThisExpr(), NodeList.nodeList(), new SimpleName("footprint")))))
+                new FieldAccessExpr(new ThisExpr(), NodeList.nodeList(), new SimpleName(FOOTPRINT_NAME)))))
         .addModifier(Modifier.DefaultKeyword.PUBLIC);
 
     addModifierIfRequired(DetailLevel.INSTANCE_ACCESSIBLE, footprintInv);
@@ -512,7 +514,7 @@ public class SimpleKeyProviderTranslator {
         NodeList.nodeList(),
         new NameExpr(new SimpleName("\\inv")),
         NodeList.nodeList(
-            new NameExpr(new SimpleName("footprint"))),
+            new NameExpr(new SimpleName(FOOTPRINT_NAME))),
         null //Measured by
     )
         .addModifier(Modifier.DefaultKeyword.PUBLIC);
@@ -753,7 +755,7 @@ public class SimpleKeyProviderTranslator {
             expr,
             //new NameExpr(formal.identifier().identifier()),
             NodeList.nodeList(),
-            new SimpleName("footprint")));
+            new SimpleName(FOOTPRINT_NAME)));
   }
 
   private List<JmlClause> translateAccessible(
@@ -824,8 +826,8 @@ public class SimpleKeyProviderTranslator {
   private MethodCallExpr createDisjunctClause(Expression a, Expression b) {
     return new MethodCallExpr(null, new SimpleName("\\disjoint"),
         NodeList.nodeList(
-            new FieldAccessExpr(a, "footprint"),
-            new FieldAccessExpr(b, "footprint")));
+            new FieldAccessExpr(a, FOOTPRINT_NAME),
+            new FieldAccessExpr(b, FOOTPRINT_NAME)));
   }
 
   private Optional<JmlClause> objectCreated(List<Formal> formals, VariableTranslator variableScope) {
@@ -840,7 +842,7 @@ public class SimpleKeyProviderTranslator {
             NodeList.nodeList(),
             //new MethodCallExpr(null, new SimpleName("\\new_elems_fresh"),
             new MethodCallExpr(null, new SimpleName("\\fresh"),
-                NodeList.nodeList(new FieldAccessExpr(new NameExpr("\\result"), "footprint")))));
+                NodeList.nodeList(new FieldAccessExpr(new NameExpr(RESULT_LABEL), FOOTPRINT_NAME)))));
 
   }
 
@@ -897,7 +899,11 @@ public class SimpleKeyProviderTranslator {
     clauses.addAll(disPostClause);
     objectCreated(contract.formals(), variableScope).ifPresent(clauses::add);
     clauses.addAll(accessibleClause);
-    clauses.addAll(assignableClause);
+
+    // only add assignableClause when there is a return type
+    if (variableScope.returnType.isPresent()) {
+      clauses.addAll(assignableClause);
+    }
 
     JmlContract jmlContract = new JmlContract()
         .setBehavior(Behavior.NORMAL)
