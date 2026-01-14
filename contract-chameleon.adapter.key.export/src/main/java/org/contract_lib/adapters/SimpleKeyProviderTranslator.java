@@ -823,6 +823,31 @@ public class SimpleKeyProviderTranslator {
     return res;
   }
 
+  private Optional<JmlClause> newElementsFreshClause(
+      List<Formal> formals,
+      VariableTranslator variableScope) {
+
+    List<Expression> changeableFootprint = formals.stream()
+        .filter((f) -> isReference(f, variableScope))
+        .filter((f) -> isAssignable(f.argumentMode()))
+        .map(Formal::identifier)
+        .map(variableScope::translate)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .map(VariableScope::getJmlTerm)
+        .toList();
+
+    if (changeableFootprint.isEmpty()) {
+      return Optional.empty();
+    }
+
+    return Optional.of(new JmlSimpleExprClause(ENSURES,
+        null,
+        NodeList.nodeList(),
+        new MethodCallExpr(null, new SimpleName("\\new_elems_fresh"),
+            NodeList.nodeList(createUnionClause(changeableFootprint)))));
+  }
+
   private MethodCallExpr createDisjunctClause(Expression a, Expression b) {
     return new MethodCallExpr(null, new SimpleName("\\disjoint"),
         NodeList.nodeList(
@@ -830,7 +855,19 @@ public class SimpleKeyProviderTranslator {
             new FieldAccessExpr(b, FOOTPRINT_NAME)));
   }
 
-  private Optional<JmlClause> objectCreated(List<Formal> formals, VariableTranslator variableScope) {
+  //NOTE: requries at leas one element
+  private Expression createUnionClause(List<Expression> expressions) {
+    if (expressions.size() == 1) {
+      return new FieldAccessExpr(expressions.getFirst(), FOOTPRINT_NAME);
+    }
+    Expression first = expressions.removeFirst();
+    return new MethodCallExpr(null, new SimpleName("\\union"),
+        NodeList.nodeList(
+            new FieldAccessExpr(first, FOOTPRINT_NAME),
+            createUnionClause(expressions)));
+  }
+
+  private Optional<List<JmlClause>> objectCreated(List<Formal> formals, VariableTranslator variableScope) {
 
     return formals.stream()
         .filter((f) -> isReference(f, variableScope))
@@ -838,11 +875,17 @@ public class SimpleKeyProviderTranslator {
         .map(Formal::identifier)
         .map(variableScope::translate)
         .findAny()
-        .map((f) -> new JmlSimpleExprClause(ENSURES, null,
-            NodeList.nodeList(),
-            //new MethodCallExpr(null, new SimpleName("\\new_elems_fresh"),
-            new MethodCallExpr(null, new SimpleName("\\fresh"),
-                NodeList.nodeList(new FieldAccessExpr(new NameExpr(RESULT_LABEL), FOOTPRINT_NAME)))));
+        .map((f) -> List.of(
+            // Create new object clause
+            new JmlSimpleExprClause(ENSURES, null,
+                NodeList.nodeList(),
+                new MethodCallExpr(null, new SimpleName("\\fresh"),
+                    NodeList.nodeList(new FieldAccessExpr(new NameExpr(RESULT_LABEL), FOOTPRINT_NAME)))),
+            // Ensure that invariants hold for created object
+            new JmlSimpleExprClause(ENSURES, null,
+                NodeList.nodeList(),
+                new MethodCallExpr(null, new SimpleName("\\invariant_for"),
+                    NodeList.nodeList(new NameExpr(RESULT_LABEL))))));
 
   }
 
@@ -897,7 +940,10 @@ public class SimpleKeyProviderTranslator {
     clauses.addAll(disPreClause);
     clauses.add(postClause);
     clauses.addAll(disPostClause);
-    objectCreated(contract.formals(), variableScope).ifPresent(clauses::add);
+    //add ensures clauses for new created object (invariant, fresh) 
+    objectCreated(contract.formals(), variableScope).ifPresent(clauses::addAll);
+    //allows all parameters that are `INOUT`, to have new objects created in their footprint
+    newElementsFreshClause(contract.formals(), variableScope).ifPresent(clauses::add);
     clauses.addAll(accessibleClause);
 
     // only add assignableClause when there is a return type
