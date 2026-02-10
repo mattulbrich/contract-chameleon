@@ -1,67 +1,142 @@
-# contract-chameleon
+# `contract-chameleon`
 
-A translation tool for `Contract-LIB`.
+## What is [contract-chameleon](https://github.com/Contract-LIB/contract-chameleon), and what not?
 
-## Executing the tool
+`contract-chameleon` is a translator to transfer
+different formal specification contracts, into each other,
+so the proven contracts in one tool can also be applied in another tool.
+To make these translations scalable in the number of tools supported
+it uses `Contract-LIB` based on `SML-LIB`
+as an intermediate representation of the contracts.
+
+Contract-Chameleon itself does not proof any implementation,
+nor does it manage proofs.
+
+```
+TODO: diagram
+```
+
+## Some basic terminology
+
+There is some basic terminology when it comes to `contract-chameleon`:
+Simply speaking, every adapter is named from the perspective of `contract-chameleon`.
+
+This means that `import` adapters take a specification
+in one of the tool specific languages (e.g., `JML (JavaDL)`)
+and translate it into a `Contract-LIB` specification.
+
+However, `export` adapters translate a `Contract-LIB` specification
+to an application's specification.
+In contrast to the `import` adapters where only one use case exists,
+there can be two ways to export a `Contract-LIB` specification.
+The `provider` perspective generates the interface the implementation
+needs to be proven against.
+The `applicant` (or `client`) perspective only generates the specification
+for an interface of a contract
+that can be used in the client tool.
+
+The following diagram visualizes this relation.
+
+```
+TODO: diagram
+```
+
+## Running the tool
 
 The tool with all default adapters can be run with:
 
 ```sh
-java -jar contract-chameleon-exe.jar
+java -jar contract-chameleon-exe.jar <adapter-name>
 ```
 
-## Add own Adapters
+### Help adapter
 
-Place the `JAR` of the additional adapter next to the `contract-chameleon-exe.jar`
+The help adapter provides information of the interface,
+and shows the available adapters.
 
 ```sh
-java -cp '*' org.contract_lib.ContractChameleon # load all available classpaths from this position
+java -jar contract-chameleon-exe.jar help 
+
+```
+
+### Executing additional adapters
+
+Place the `JAR` of the additional adapter next to the `contract-chameleon-exe.jar`:
+
+```sh
+java -cp '*' org.contract_lib.ContractChameleon help <adapter-name>
 ```
 
 The additional `JAR` must have a file with the name `org.contract_lib.contract_chameleon.Adapter`
- in `src/main/ressources/META-INF/services`
+in `src/main/ressources/META-INF/services`
 containing the full class name (including package) of the additional adapter.
 Compare the following [example](./contract-chameleon.adapter.key.import/).
 
 ## Developing the tool
 
-- Cloning the git directory
+### Writing custom adapters for `contract-chameleon`
 
-```sh
-git clone git@github.com:Contract-LIB/contract-chameleon.git
-```
+To write a custom adapter for `contract-chameleon`,
+a basic template with recommendations is provided here:
+[`adapter-extension`](https://github.com/Contract-LIB/contract-chameleon-adapter-extension):
 
-- Install git submodules
+### Building `contract-chameleon` locally
 
-```sh
-cd contract-chameleon
-git submodule update --init --recursive # to fetch and initialize the submodules the first time 
-git pull --rebase --recurse-submodules # to pull changes from submodules
-```
+You can build the core package of `contract-chameleon` yourself,
+with its dependencies by following the following steps:
 
-- Publish custom JML-Parser
+1. Cloning the git directory
 
-```
-# Ensure to be at root of contract chameleon
-# cd contract-chameleon (or your folder name)
-cd libs/jmlparser
-./mvnw clean install -DskipTests
-ls ~/.m2/repository/io/github/jmltoolkit/jmlparser-core/ #check that snapshot exists
-```
+    ```sh
+    git clone git@github.com:Contract-LIB/contract-chameleon.git contract-chameleon
+    ```
 
-- Build with gradle
+1. Install required git submodules
 
-```sh
-# Ensure to be at root of contract chameleon
-# cd contract-chameleon (or your folder name)
-gradle clean build
-gradle run --args="<adapter-name> <file_path>"
-gradle run-integration-tests #Simple way to check if the adapter do what they should
-```
+    ```sh
+    cd contract-chameleon
+    # to fetch and initialize the submodules the first time
+    git submodule update --init --recursive 
+    ```
 
-## Accessing the JavaDoc
+    ```sh
+    # to pull changes from submodules
+    git pull --rebase --recurse-submodules
+    ```
 
-For each module the `JavaDoc` can be found in `<module>/build/docs/javadoc/org/contract_lib/contract_chameleon/package-summary.html`.
+1. Publish custom JML-Parser
+
+    ```sh
+    # Ensure to be at root of contract chameleon
+    # cd contract-chameleon (or your folder name)
+    cd libs/jmlparser
+    ./mvnw clean install -DskipTests
+    ls ~/.m2/repository/io/github/jmltoolkit/jmlparser-core/ #check that snapshot exists
+    ```
+
+1. Build `contract-chameleon` with `gradle`
+
+    ```sh
+    # Ensure to be at root of contract chameleon
+    gradle clean build
+    ```
+
+1. Execute `contract-chameleon`
+
+    ```sh
+    gradle run --args="<adapter-name> <file_path>"
+    ```
+
+1. Run integration tests
+
+    ```sh
+    gradle run-integration-tests
+    ```
+
+### Accessing the JavaDoc
+
+For each module the `JavaDoc` can be found in
+`<module>/build/docs/javadoc/org/contract_lib/contract_chameleon/package-summary.html`.
 
 ### JavaDoc of Dependencies
 
@@ -78,7 +153,17 @@ The `JavaDoc` can be found in for the different packages: `<jmlparser-module>/ja
 
 ### KeY
 
+Requires `KeY: ci-tool`, `KeY`
+
 ```sh
 # check if proofs can be found in key (see folder `tests.integration`)
 gradle key_ci-check-all --continue
 ```
+
+(under construction)
+
+### VeriFast
+
+Requires `verifast`
+
+(under construction)
